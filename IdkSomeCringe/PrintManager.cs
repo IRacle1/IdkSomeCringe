@@ -57,7 +57,17 @@ namespace IdkSomeCringe
 
             Blocks = cachedBlocks.AsReadOnly();
 
-            UpdateBlocks();
+            Vector2 vec = new(0, 0);
+
+            for (int i = 0; i < Height; i++)
+            {
+                vec.Y = i;
+                for (int j = 0; j < Width; j++)
+                {
+                    vec.X = j;
+                    cachedBlocks[vec] = vec.GetBlockType();
+                }
+            }
 
             SpawnFood();
         }
@@ -132,7 +142,7 @@ namespace IdkSomeCringe
 
         public static ConsoleColor ProcessGradient(double progress)
         {
-            return Gradient[(int)Math.Round(MapRange(progress, (0, 1), (0, Gradient.Length - 1)))];
+            return Gradient[(int)Math.Round(MapRange(progress, (0, 1), (0, Gradient.Length - 1)), 0)];
         }
 
         public static double MapRange(double value, (double Start, double Stop) range1, (double Start, double Stop) range2)
@@ -207,21 +217,6 @@ namespace IdkSomeCringe
             Foods.Clear();
             Init(Width, Height);
             GC.Collect();
-        }
-
-        private static void UpdateBlocks()
-        {
-            Vector2 vec = new(0, 0);
-
-            for (int i = 0; i < Height; i++)
-            {
-                vec.Y = i;
-                for (int j = 0; j < Width; j++)
-                {
-                    vec.X = j;
-                    cachedBlocks[vec] = vec.GetBlockType();
-                }
-            }
         }
 
         public static int MaptoArray(int y, int width, int x)
