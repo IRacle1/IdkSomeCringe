@@ -4,8 +4,10 @@
 public enum BlockType
 {
     None = 0,
-    Wall = 1,
-    Food = 2,
-    Snake = 4,
-    BigFood = 8,    
+    Reserved = 1,
+    Wall = 2,
+    Food = 4,
+    Snake = 8,
+    BigFood = 16,
+    ReservedWall = Reserved | Wall
 }

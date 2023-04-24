@@ -39,9 +39,10 @@ namespace IdkSomeCringe
             { BlockType.None, new(' ') },
             { BlockType.Wall, new('#', ConsoleColor.DarkGray, ConsoleColor.Black) },
             { BlockType.Food, new('*', ConsoleColor.Green, ConsoleColor.Black) },
+            { BlockType.ReservedWall, new('#', ConsoleColor.Gray, ConsoleColor.Black) },
         });
 
-        private static ConsoleColor[] Gradient = new[]
+        public static ConsoleColor[] Gradient = new[]
         {
             ConsoleColor.Cyan,
             ConsoleColor.DarkCyan,
@@ -115,6 +116,16 @@ namespace IdkSomeCringe
             {
                 Draw();
 
+                Vector2 vec = new(3, 1);
+
+                string str = "Твои очки: " + BodyParts.Count.ToString();
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    chars[vec.MapToArray(Width)] = new CharInfo(str[i], ConsoleColor.White, ConsoleColor.Black);
+                    vec += Vector2.Right; 
+                }
+
                 for (int i = BodyParts.Count - 1; i >= 0; i--)
                 {
                     chars[BodyParts[i].MapToArray(Width)] = BodyPickerFunction(i, BodyParts.Count);
@@ -131,7 +142,7 @@ namespace IdkSomeCringe
         {
             if (index == 0)
             {
-                return '╬';
+                return 'ȩ';
             }
 
             VectorLocation location;

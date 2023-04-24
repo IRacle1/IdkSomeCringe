@@ -11,8 +11,10 @@ public static class FastConsole
     private static short consoleHeight = (short)Console.WindowHeight;
     private static short consoleWidth = (short)Console.WindowWidth;
 
-    private static SmallRect AllScreenRect =
+    private static SmallRect allScreenRect =
         new() { Left = 0, Top = 0, Right = consoleWidth, Bottom = consoleHeight };
+
+    public static ref readonly SmallRect AllScreenRect => ref allScreenRect;
 
     private static Coord BufferSize =
         new(consoleWidth, consoleHeight);

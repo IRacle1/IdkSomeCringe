@@ -29,9 +29,19 @@ public static class Extensions
         }
 
         if (vec.X == 0 || vec.X == PrintManager.Width - 1 || 
-            vec.Y == 0 || vec.Y == PrintManager.Height - 1)
+            vec.Y <= 3 || vec.Y == PrintManager.Height - 1)
         {
             type |= BlockType.Wall;
+        }
+
+        if (vec.X >= 0 && vec.X <= PrintManager.Width - 1 && vec.Y < 3)
+        {
+            type |= BlockType.Reserved;
+
+            if (vec.X != 0 && vec.X != PrintManager.Width - 1 && vec.Y != 0)
+            {
+                type &= ~BlockType.Wall;
+            }
         }
 
         if (PrintManager.BodyParts.Contains(vec))

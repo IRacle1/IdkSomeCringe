@@ -31,10 +31,10 @@ public struct Vector2 : IEquatable<Vector2>
 
     public int SqrMagnitude => X * X + Y * Y;
 
-    public int MapToArray(int width) =>
+    public readonly int MapToArray(int width) =>
         Y * width + X;
 
-    public bool Equals(Vector2 other) =>
+    public readonly bool Equals(Vector2 other) =>
         X == other.X && Y == other.Y;
 
     public static Vector2 Zero { get; } = new Vector2(0, 0);
