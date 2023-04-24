@@ -1,30 +1,30 @@
-﻿using IdkSomeCringe.API;
-using IdkSomeCringe.LowLevel;
-using System.Drawing;
+﻿using IdkSomeCringe.LowLevel;
 
 namespace IdkSomeCringe
 {
     internal class Program
     {
-        public static int Framerate { get; set; } = 1000;
-
         static void Main(string[] args)
         {
-            int height = Console.WindowHeight = 30;
-            int width = Console.WindowWidth = 90;
-            Console.BufferHeight = Console.WindowHeight + 1;
-            Console.BufferWidth = Console.WindowWidth + 1;
+            int height = 30;
+            int width = 90;
+
+            Console.SetWindowSize(width, height);
+            Console.SetBufferSize(width + 1, height + 1);
 
             Console.CursorVisible = false;
-            Console.Title = "Idk";
+            Console.Title = "Snake idk";
 
             Console.OutputEncoding = System.Text.Encoding.Unicode;
 
-            PrintManager.Init(width, height);
+            PrintManager.Init(width, height, (index, count) =>
+            {
+                double prog = index / (double)Math.Clamp(count - 1, 1, count);
+                return new CharInfo(PrintManager.GetSnakePartChar(index), PrintManager.ProcessGradient(prog), ConsoleColor.Black);
+            });
 
             while (true)
             {
-                FastConsole.Write(PrintManager.Chars);
                 PrintManager.Update();
                 Thread.Sleep(1);
             }

@@ -11,13 +11,15 @@ using static System.Reflection.Metadata.BlobBuilder;
 
 namespace IdkSomeCringe
 {
-    public class PrintManager
+    public static class PrintManager
     {
-        private static KeyCode[] keyCodes = null!;
+        private static KeyCode[] keyCodes = Enum.GetValues<KeyCode>();
 
         private static Dictionary<Vector2, BlockType> cachedBlocks = new();
 
-        public static CharInfo[] Chars = null!;
+        private static CharInfo[] chars = null!;
+
+        public static Func<int, int, CharInfo> BodyPickerFunction = null!;
 
         public static int Height;
         public static int Width;
@@ -25,9 +27,9 @@ namespace IdkSomeCringe
         public static List<Vector2> BodyParts = new();
         public static List<Vector2> Foods = new();
 
-        public static KeyCode LastKeyCode = KeyCode.Up;
+        private static KeyCode lastKeyCode = KeyCode.Up;
 
-        public static int FramesPerMove = 4;
+        public static int FramesPerMove = 6;
         private static int currentFrames = 0;
 
         public static ReadOnlyDictionary<Vector2, BlockType> Blocks = null!;
@@ -47,15 +49,18 @@ namespace IdkSomeCringe
             ConsoleColor.DarkBlue,
         };
 
-        public static void Init(int width, int height)
+        public static void Init(int width, int height, Func<int, int, CharInfo> bodyPickerFunction)
         {
             Height = height;
             Width = width;
-            Chars = new CharInfo[Height * Width];
+
+            chars = new CharInfo[Height * Width];
 
             BodyParts.Add(new Vector2(Width / 2, Height / 2));
 
             Blocks = cachedBlocks.AsReadOnly();
+
+            BodyPickerFunction = bodyPickerFunction;
 
             Vector2 vec = new(0, 0);
 
@@ -87,11 +92,11 @@ namespace IdkSomeCringe
                     
                     if (BlockInfos.TryGetValue(cachedBlocks[vec], out CharInfo info))
                     {
-                        Chars[vec.MapToArray(Width)] = info;
+                        chars[vec.MapToArray(Width)] = info;
                     }
                     else
                     {
-                        Chars[vec.MapToArray(Width)] = BlockInfos[BlockType.None];
+                        chars[vec.MapToArray(Width)] = BlockInfos[BlockType.None];
                     }
                 }
             }
@@ -99,6 +104,8 @@ namespace IdkSomeCringe
 
         public static void Update()
         {
+            FastConsole.Write(chars);
+
             ProcessKey();
 
             if (!ProcessFrameCheck())
@@ -110,26 +117,54 @@ namespace IdkSomeCringe
 
                 for (int i = BodyParts.Count - 1; i >= 0; i--)
                 {
-                    double prog = i / Math.Clamp((double)BodyParts.Count - 1, 1, BodyParts.Count);
-                    Chars[BodyParts[i].MapToArray(Width)] = new CharInfo('&', ProcessGradient(prog), ConsoleColor.Black);
+                    chars[BodyParts[i].MapToArray(Width)] = BodyPickerFunction(i, BodyParts.Count);
                 }
 
                 if (Foods.Count == 0)
                     SpawnFood();
             }
+
+
         }
 
-        public char GetSnakePartChar(int index)
+        public static char GetSnakePartChar(int index)
         {
             if (index == 0)
             {
-                return '&';
+                return '╬';
             }
-            VectorLocation location = VectorLocation.None;
-            for (int i = 1; i < BodyParts.Count - 2; i++){
-                Vector2 first = BodyParts[i] - BodyParts[i - 1];
-                location = Vector2.GetVectorLocationByVector(first);
+
+            VectorLocation location;
+
+            if (index == BodyParts.Count - 1)
+            {
+                location = (BodyParts[^2] - BodyParts[^1]).GetLocation();
             }
+            else
+            {
+                VectorLocation first = (BodyParts[index - 1] - BodyParts[index]).GetLocation();
+                VectorLocation second = (BodyParts[index + 1] - BodyParts[index]).GetLocation();
+
+                location = first | second;
+            }
+
+            switch (location)
+            {
+                case VectorLocation.UpLeft:
+                    return '╝';
+                case VectorLocation.UpRight:
+                    return '╚';
+                case VectorLocation.DownRight:
+                    return '╔';
+                case VectorLocation.DownLeft:
+                    return '╗';
+                case { } when location.HasFlag(VectorLocation.Up) || location.HasFlag(VectorLocation.Down):
+                    return '║';
+                case { } when location.HasFlag(VectorLocation.Left) || location.HasFlag(VectorLocation.Right):
+                    return '═';
+            }
+
+            return '?';
         }
 
         public static bool ProcessFrameCheck()
@@ -168,11 +203,11 @@ namespace IdkSomeCringe
 
         public static void ProcessKey()
         {
-            foreach (KeyCode code in keyCodes ??= Enum.GetValues<KeyCode>())
+            foreach (KeyCode code in keyCodes)
             {
                 if (NativeKeyboard.IsKeyDown(code))
                 {
-                    LastKeyCode = code;
+                    lastKeyCode = code;
                     break;
                 }
             }
@@ -182,7 +217,7 @@ namespace IdkSomeCringe
         {
             Vector2 last = BodyParts[0];
 
-            switch (LastKeyCode)
+            switch (lastKeyCode)
             {
                 case KeyCode.Left:
                     last.X--;
@@ -211,7 +246,6 @@ namespace IdkSomeCringe
                     // TODO
                     break;
                 case BlockType.None:
-                    // BodyParts.Add(BodyParts[^1] - (BodyParts[^1] - last));
                     break;
             }
 
@@ -228,7 +262,7 @@ namespace IdkSomeCringe
             Thread.Sleep(1000);
             BodyParts.Clear();
             Foods.Clear();
-            Init(Width, Height);
+            Init(Width, Height, BodyPickerFunction);
             GC.Collect();
         }
 

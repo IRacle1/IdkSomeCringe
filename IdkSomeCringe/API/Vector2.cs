@@ -38,8 +38,8 @@ public struct Vector2 : IEquatable<Vector2>
         X == other.X && Y == other.Y;
 
     public static Vector2 Zero { get; } = new Vector2(0, 0);
-    public static Vector2 Up { get; } = new Vector2(0, 1);
-    public static Vector2 Down { get; } = new Vector2(0, -1);
+    public static Vector2 Up { get; } = new Vector2(0, -1);
+    public static Vector2 Down { get; } = new Vector2(0, 1);
     public static Vector2 Right { get; } = new Vector2(1, 0);
     public static Vector2 Left { get; } = new Vector2(-1, 0);
 
@@ -69,45 +69,38 @@ public struct Vector2 : IEquatable<Vector2>
         switch (vectorLocation)
         {
             case VectorLocation.Left:
-                return Vector2.Left;
+                return Left;
             case VectorLocation.Right:
-                return Vector2.Right;
+                return Right;
             case VectorLocation.Down:
-                return Vector2.Down;
+                return Down;
             case VectorLocation.Up:
-                return Vector2.Up;
+                return Up;
             case VectorLocation.DownLeft:
-                return Vector2.Left + Vector2.Down;
+                return Left + Down;
             case VectorLocation.DownRight:
-                return Vector2.Down + Vector2.Right;
+                return Down + Right;
             case VectorLocation.UpLeft:
-                return Vector2.Left + Vector2.Up;
+                return Left + Up;
             case VectorLocation.UpRight:
-                return Vector2.Up + Vector2.Right;
+                return Up + Right;
         }
 
-        return Vector2.Zero;
+        return Zero;
     }
 
-    public static VectorLocation GetVectorLocationByVector(Vector2 vectorLocation)
+    public VectorLocation GetLocation()
     {
         VectorLocation location = VectorLocation.None;
-        if (vectorLocation.X == -1)
-        {
+
+        if (X == -1)
             location |= VectorLocation.Left;
-        }
-        if (vectorLocation.Y == -1)
-        {
-            location |= VectorLocation.Down;
-        }
-        if (vectorLocation.X == 1)
-        {
-            location |= VectorLocation.Right;
-        }
-        if (vectorLocation.Y == 1)
-        {
+        if (Y == -1)
             location |= VectorLocation.Up;
-        }
+        if (X == 1)
+            location |= VectorLocation.Right;
+        if (Y == 1)
+            location |= VectorLocation.Down;
 
         return location;
     }
