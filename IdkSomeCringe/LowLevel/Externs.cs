@@ -9,7 +9,7 @@ internal static partial class Externs
     internal static partial SafeFileHandle GetStdHandle(
         [MarshalAs(UnmanagedType.U4)] uint nStdHandles);
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("Kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern bool WriteConsoleOutput(
         SafeFileHandle hConsoleOutput,
         CharInfo[] lpBuffer,
@@ -31,7 +31,7 @@ public struct Coord
     }
 }
 
-[StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 public struct CharInfo
 {
     [FieldOffset(0)] public char UnicodeChar;

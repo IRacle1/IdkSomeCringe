@@ -12,9 +12,13 @@ namespace IdkSomeCringe
         {
             int height = Console.WindowHeight = 30;
             int width = Console.WindowWidth = 90;
+            Console.BufferHeight = Console.WindowHeight + 1;
+            Console.BufferWidth = Console.WindowWidth + 1;
 
             Console.CursorVisible = false;
             Console.Title = "Idk";
+
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
 
             PrintManager.Init(width, height);
 

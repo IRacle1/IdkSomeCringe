@@ -110,12 +110,25 @@ namespace IdkSomeCringe
 
                 for (int i = BodyParts.Count - 1; i >= 0; i--)
                 {
-                    double prog = i / Math.Clamp((double)BodyParts.Count, 1, BodyParts.Count);
+                    double prog = i / Math.Clamp((double)BodyParts.Count - 1, 1, BodyParts.Count);
                     Chars[BodyParts[i].MapToArray(Width)] = new CharInfo('&', ProcessGradient(prog), ConsoleColor.Black);
                 }
 
                 if (Foods.Count == 0)
                     SpawnFood();
+            }
+        }
+
+        public char GetSnakePartChar(int index)
+        {
+            if (index == 0)
+            {
+                return '&';
+            }
+            VectorLocation location = VectorLocation.None;
+            for (int i = 1; i < BodyParts.Count - 2; i++){
+                Vector2 first = BodyParts[i] - BodyParts[i - 1];
+                location = Vector2.GetVectorLocationByVector(first);
             }
         }
 
@@ -198,7 +211,7 @@ namespace IdkSomeCringe
                     // TODO
                     break;
                 case BlockType.None:
-                    BodyParts.Add(BodyParts[^1] - (BodyParts[^1] - last));
+                    // BodyParts.Add(BodyParts[^1] - (BodyParts[^1] - last));
                     break;
             }
 
