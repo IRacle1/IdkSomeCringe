@@ -118,12 +118,20 @@ namespace IdkSomeCringe
 
                 Vector2 vec = new(3, 1);
 
-                string str = "Твои очки: " + BodyParts.Count.ToString();
+                string str = "Твои очки: ";
 
                 for (int i = 0; i < str.Length; i++)
                 {
                     chars[vec.MapToArray(Width)] = new CharInfo(str[i], ConsoleColor.White, ConsoleColor.Black);
                     vec += Vector2.Right; 
+                }
+
+                str = BodyParts.Count.ToString();
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    chars[vec.MapToArray(Width)] = new CharInfo(str[i], ConsoleColor.Green, ConsoleColor.Black);
+                    vec += Vector2.Right;
                 }
 
                 for (int i = BodyParts.Count - 1; i >= 0; i--)
