@@ -7,48 +7,16 @@ public static class Extensions
         return (blockType & flag) == flag;
     }
 
-    public static bool IsEmpty(this Vector2 vec) =>
-        GetBlockType(vec) == BlockType.None;
-
-    public static bool IsWall(this Vector2 vec) =>
-        GetBlockType(vec).HasFlagFast(BlockType.Wall);
-
-    public static bool IsFood(this Vector2 vec) =>
-        GetBlockType(vec).HasFlagFast(BlockType.Food);
-
-    public static bool IsSnake(this Vector2 vec) =>
-        GetBlockType(vec).HasFlagFast(BlockType.Snake);
-
-    public static BlockType GetBlockType(this Vector2 vec)
+    public static bool IsCachedBlockType(this BlockType blockType)
     {
-        BlockType type = BlockType.None;
+        return blockType is BlockType.ReservedWall or BlockType.Wall or BlockType.Reserved;
+    }
 
-        if (PrintManager.Foods.Contains(vec))
-        {
-            type |= BlockType.Food;
-        }
-
-        if (vec.X == 0 || vec.X == PrintManager.Width - 1 || 
-            vec.Y <= 3 || vec.Y == PrintManager.Height - 1)
-        {
-            type |= BlockType.Wall;
-        }
-
-        if (vec.X >= 0 && vec.X <= PrintManager.Width - 1 && vec.Y < 3)
-        {
-            type |= BlockType.Reserved;
-
-            if (vec.X != 0 && vec.X != PrintManager.Width - 1 && vec.Y != 0)
-            {
-                type &= ~BlockType.Wall;
-            }
-        }
-
-        if (PrintManager.BodyParts.Contains(vec))
-        {
-            type |= BlockType.Snake;
-        }
-
-        return type;
+    public static double MapRange(double value, (double Start, double Stop) range1, (double Start, double Stop) range2)
+    {
+        return (value - range1.Start) /
+            (range1.Stop - range1.Start) *
+            (range2.Stop - range2.Start) +
+            range2.Start;
     }
 }
